@@ -2,6 +2,8 @@
 
 ## Tables
 
+### • ERD
+![Alt Text](https://github.com/reynn-s/Property-Rental-Database-Project-MySQL/blob/main/docs/ERD.jpg)
 ### • Listings
 ```
 CREATE TABLE Listings
