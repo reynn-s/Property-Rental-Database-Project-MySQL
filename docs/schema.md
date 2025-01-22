@@ -20,6 +20,18 @@ CREATE TABLE Listings
 ```
 **Description:**
 The Listings table stores information about properties listed on the platform. Each listing has a unique identifier (listing_id) and includes details like the owner, property type, title, description, location, price per night, maximum number of guests, and the date the listing was added to the platform.
+**Columns**
+| Field                   | Type          | Null | Key  | Default           | Extra             |
+|-------------------------|---------------|------|------|-------------------|-------------------|
+| listing_id              | int           | NO   | PRI  | null              | auto_increment    |
+| owner_id                | int           | NO   | MUL  | null              |                   |
+| property_type_id        | int           | NO   | MUL  | null              |                   |
+| listing_title           | varchar(100)  | NO   | UNI  | null              |                   |
+| listing_description     | varchar(100)  | NO   |      | null              |                   |
+| listing_location        | varchar(100)  | NO   | MUL  | null              |                   |
+| listing_price_per_night | double        | NO   | MUL  | null              |                   |
+| listing_max_guests      | int           | NO   |      | null              |                   |
+| listing_date_listed     | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
 ### • Photos
 ```
 CREATE TABLE Photos
@@ -32,7 +44,14 @@ CREATE TABLE Photos
 );
 ```
 **Description:**
-- a
+The Photos table stores images associated with listings. Each photo is linked to a listing through listing_id and includes information like the URL of the photo and the date it was uploaded.
+**Columns**
+| Field              | Type          | Null | Key  | Default           | Extra             |
+|--------------------|---------------|------|------|-------------------|-------------------|
+| photo_id           | int           | NO   | PRI  | null              | auto_increment    |
+| listing_id         | int           | NO   | MUL  | null              |                   |
+| photo_url          | text          | NO   |      | null              |                   |
+| photo_upload_date  | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
 ### • Property_Types
 ```
 CREATE TABLE Property_Types
@@ -44,7 +63,13 @@ CREATE TABLE Property_Types
 );
 ```
 **Description:**
-- a
+The Property_Types table defines various categories of properties (e.g., apartments, houses, villas) available on the platform. Each type is uniquely identified by property_type_id and includes a name and a brief description.
+**Columns**
+| Field                | Type          | Null | Key  | Default | Extra          |
+|----------------------|---------------|------|------|---------|----------------|
+| property_type_id     | int           | NO   | PRI  | null    | auto_increment |
+| property_type_name   | varchar(100)  | NO   | UNI  | null    |                |
+| property_description | varchar(255)  | NO   |      | null    |                |
 ### • Owners
 ```
 CREATE TABLE Owners
@@ -58,8 +83,15 @@ CREATE TABLE Owners
 );
 ```
 **Description:**
-- Contains owners who list their properties on the platform
-- This records
+The Owners table contains information about property owners who list their properties on the platform. Each owner has a unique identifier (owner_id) and records their name, email, phone number, and the date they registered on the platform.
+**Columns**
+| Field               | Type           | Null | Key  | Default           | Extra              |
+|---------------------|----------------|------|------|-------------------|--------------------|
+| `user_id`           | int            | NO   | PRI  | null              | auto_increment     |
+| `user_name`         | varchar(100)   | NO   | UNI  | null              |                    |
+| `user_email`        | varchar(100)   | NO   |      | null              |                    |
+| `user_phone_number` | varchar(100)   | NO   |      | null              |                    |
+| `user_date_created` | timestamp      | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED  |
 ### • Reservations
 ```
 CREATE TABLE Reservations
@@ -76,7 +108,18 @@ CREATE TABLE Reservations
 );
 ```
 **Description:**
-- a
+The Reservations table records booking details for listings. Each reservation has a unique ID (reservation_id) and includes information about the listing, user, check-in and check-out dates, total price, status, and the date the reservation was created.
+**Columns**
+| Field                        | Type          | Null | Key  | Default           | Extra             |
+|------------------------------|---------------|------|------|-------------------|-------------------|
+| reservation_id               | int           | NO   | PRI  | null              | auto_increment    |
+| listing_id                   | int           | NO   | MUL  | null              |                   |
+| user_id                      | int           | NO   | MUL  | null              |                   |
+| reservation_check_in_date    | date          | NO   | MUL  | null              |                   |
+| reservation_check_out_date   | date          | NO   |      | null              |                   |
+| reservation_total_price      | double        | NO   |      | null              |                   |
+| reservation_status           | varchar(20)   | NO   | MUL  | null              |                   |
+| reservation_date_created     | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
 ### • Payments
 ```
 CREATE TABLE Payments
@@ -90,7 +133,16 @@ CREATE TABLE Payments
 );
 ```
 **Description:**
-- a
+The Payments table tracks all payment transactions associated with reservations. Each payment is identified by a unique ID (payment_id) and includes details about the reservation, payment method, date, and status.
+**Columns**
+# Table: Payments
+| Field            | Type         | Null | Key  | Default | Extra          |
+|------------------|--------------|------|------|---------|----------------|
+| `payment_id`     | int          | NO   | PRI  | null    | auto_increment |
+| `reservation_id` | int          | NO   | MUL  | null    |                |
+| `payment_method` | varchar(20)  | NO   |      | null    |                |
+| `payment_date`   | date         | NO   |      | null    |                |
+| `payment_status` | varchar(20)  | NO   |      | null    |                |
 ### • Users
 ```
 CREATE TABLE Users
@@ -104,7 +156,15 @@ CREATE TABLE Users
 );
 ```
 **Description:**
-- a
+The Users table stores information about people using the platform to book properties. Each user has a unique identifier (user_id) and includes their name, email, phone number, and the date they joined the platform.
+**Columns**
+| Field              | Type          | Null | Key  | Default           | Extra             |
+|--------------------|---------------|------|------|-------------------|-------------------|
+| user_id            | int           | NO   | PRI  | null              | auto_increment    |
+| user_name          | varchar(100)  | NO   | UNI  | null              |                   |
+| user_email         | varchar(100)  | NO   |      | null              |                   |
+| user_phone_number  | varchar(100)  | NO   |      | null              |                   |
+| user_date_created  | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
 ### • Reviews
 ```
 CREATE TABLE Reviews
@@ -118,8 +178,15 @@ CREATE TABLE Reviews
 );
 ```
 **Description:**
-- a
-
+The Reviews table contains feedback provided by users for listings. Each review is uniquely identified by review_id and includes the user, listing, comment, and the date the review was created.
+**Columns**
+| Field                 | Type          | Null | Key  | Default           | Extra             |
+|-----------------------|---------------|------|------|-------------------|-------------------|
+| review_id             | int           | NO   | PRI  | null              | auto_increment    |
+| user_id               | int           | NO   | MUL  | null              |                   |
+| listing_id            | int           | NO   | MUL  | null              |                   |
+| review_comment        | text          | NO   |      | null              |                   |
+| review_date_created   | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
 ## Relationships
 [Document all foreign key relationships]
 
