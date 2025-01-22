@@ -135,7 +135,6 @@ CREATE TABLE Payments
 **Description:**
 The Payments table tracks all payment transactions associated with reservations. Each payment is identified by a unique ID (payment_id) and includes details about the reservation, payment method, date, and status.
 **Columns**
-# Table: Payments
 | Field            | Type         | Null | Key  | Default | Extra          |
 |------------------|--------------|------|------|---------|----------------|
 | `payment_id`     | int          | NO   | PRI  | null    | auto_increment |
@@ -187,8 +186,107 @@ The Reviews table contains feedback provided by users for listings. Each review 
 | listing_id            | int           | NO   | MUL  | null              |                   |
 | review_comment        | text          | NO   |      | null              |                   |
 | review_date_created   | timestamp     | NO   |      | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+
 ## Relationships
-[Document all foreign key relationships]
+- Users -> Reviews: One-to-Many (one user can write many reviews)
+- Users -> Reservations: One-to-Many (one user can make many reservations)
+- Listings -> Reviews: One-to-Many (one listing can have many reviews)
+- Listings -> Reservations: One-to-Many (one listing can have many reservations)
+- Listings -> Photos: One-to-Many (one listing can have many photos)
+- Listings -> Property_Types: Many-to-One (many listings can have one property type)
+- Owners -> Listings: One-to-Many (one owner can have many listings)
+- Reservations -> Payments: One-to-One (each reservation has one payment)
 
 ## Constraints
-[Document all check constraints and business rules]
+### Foreign Key Constraints
+```
+ALTER TABLE Reservations
+  ADD CONSTRAINT FK_Listings_TO_Reservations
+    FOREIGN KEY (listing_id)
+    REFERENCES Listings (listing_id);
+```
+```
+ALTER TABLE Reservations
+  ADD CONSTRAINT FK_Users_TO_Reservations
+    FOREIGN KEY (user_id)
+    REFERENCES Users (user_id);
+```
+```
+ALTER TABLE Payments
+  ADD CONSTRAINT FK_Reservations_TO_Payments
+    FOREIGN KEY (reservation_id)
+    REFERENCES Reservations (reservation_id);
+```
+```
+ALTER TABLE Listings
+  ADD CONSTRAINT FK_Property_Types_TO_Listings
+    FOREIGN KEY (property_type_id)
+    REFERENCES Property_Types (property_type_id);
+```
+```
+ALTER TABLE Listings
+  ADD CONSTRAINT FK_Owners_TO_Listings
+    FOREIGN KEY (owner_id)
+    REFERENCES Owners (owner_id);
+```
+```
+ALTER TABLE Reviews
+  ADD CONSTRAINT FK_Listings_TO_Reviews
+    FOREIGN KEY (listing_id)
+    REFERENCES Listings (listing_id);
+```
+```
+ALTER TABLE Photos
+  ADD CONSTRAINT FK_Listings_TO_Photos
+    FOREIGN KEY (listing_id)
+    REFERENCES Listings (listing_id);
+```
+```
+ALTER TABLE Reviews
+  ADD CONSTRAINT FK_Users_TO_Reviews
+    FOREIGN KEY (user_id)
+    REFERENCES Users (user_id);
+```
+## Check Constraints
+```
+ALTER TABLE Listings
+  ADD CONSTRAINT chk_listing_price 
+    CHECK (listing_price_per_night > 0);
+```
+```
+ALTER TABLE Reservations
+  ADD CONSTRAINT chk_reservation_status
+    CHECK (reservation_status IN ('Booked', 'CheckedIn', 'Completed', 'Cancelled'));
+```
+```
+ALTER TABLE Listings
+  ADD CONSTRAINT chk_max_guests 
+    CHECK (listing_max_guests > 0);
+```
+```
+ALTER TABLE Payments
+    ADD CONSTRAINT chk_payment_status
+        CHECK (payment_status IN ('Paid', 'Pending', 'Refunded'));
+```
+```
+ALTER TABLE Payments
+    ADD CONSTRAINT chk_payment_method
+        CHECK (payment_method IN ('Credit Card', 'Debit Card', 'PayPal', 'Bank Transfer'));
+```
+### Unique Constraint
+```
+ALTER TABLE Listings
+  ADD CONSTRAINT UQ_listing_title UNIQUE (listing_title);
+```
+```
+ALTER TABLE Owners
+  ADD CONSTRAINT UQ_owner_email UNIQUE (owner_email);
+```
+```
+ALTER TABLE Property_Types
+  ADD CONSTRAINT UQ_property_type_name UNIQUE (property_type_name);
+```
+```
+ALTER TABLE Users
+  ADD CONSTRAINT UQ_user_name UNIQUE (user_name);
+```
