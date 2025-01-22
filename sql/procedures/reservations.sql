@@ -3,24 +3,21 @@ CREATE PROCEDURE AddReservation(
     IN UserFullName VARCHAR(100),
     IN ListingTitle VARCHAR(100),
     IN CheckInDate DATE,
-    IN CheckOutDate DATE,
-    IN CurrentDate DATE
+    IN CheckOutDate DATE
 )
 BEGIN
     DECLARE UserId INT;
     DECLARE ListingId INT;
     DECLARE TotalPrice DOUBLE;
 
-    IF CurrentDate IS NULL THEN
-        SET CurrentDate = CURDATE();
-    END IF;
+    SET @CurrentDate = CURDATE();
 
     IF CheckInDate >= CheckOutDate THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Check-in date must be before check-out date';
     END IF;
 
-    IF CheckInDate < CurrentDate THEN
+    IF CheckInDate < @CurrentDate THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Cannot make reservations for past dates';
     END IF;
@@ -65,7 +62,7 @@ BEGIN
 
     INSERT INTO Reservations (listing_id, user_id, reservation_check_in_date, reservation_check_out_date, reservation_total_price, reservation_status)
     VALUES (ListingId, UserId, CheckInDate, CheckOutDate, TotalPrice, 'Booked');
-    
+
     SELECT 'Reservation added successfully' AS Message;
 END;
 
